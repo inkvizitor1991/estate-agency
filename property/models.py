@@ -12,7 +12,11 @@ CHOICES = (
 
 
 class Flat(models.Model):
-    new_building = models.NullBooleanField('Новое здание', choices=CHOICES)
+    new_building = models.NullBooleanField(
+        'Новое здание',
+        choices=CHOICES,
+        db_index=True
+    )
     created_at = models.DateTimeField(
         'Когда создано объявление',
         default=timezone.now,
@@ -64,7 +68,8 @@ class Flat(models.Model):
     likes = models.ManyToManyField(
         User,
         blank=True,
-        verbose_name='Кто лайкнул'
+        verbose_name='Кто лайкнул',
+        related_name='liked_posts'
     )
 
     def __str__(self):
@@ -74,11 +79,13 @@ class Flat(models.Model):
 class Complaint(models.Model):
     initials = models.ForeignKey(
         User, on_delete=models.CASCADE,
-        verbose_name='Кто жаловался'
+        verbose_name='Кто жаловался',
+        related_name='complaints'
     )
     flat = models.ForeignKey(
         Flat, on_delete=models.CASCADE,
-        verbose_name='Квартира, на которую пожаловались'
+        verbose_name='Квартира, на которую пожаловались',
+        related_name='complaints'
     )
     complaint_text = models.TextField('Текст жалобы')
 
